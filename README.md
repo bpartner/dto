@@ -2,9 +2,9 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/bpartner/data-helper.svg?style=flat-square)](https://packagist.org/packages/bpartner/dto)
 [![Total Downloads](https://img.shields.io/packagist/dt/bpartner/data-helper.svg?style=flat-square)](https://packagist.org/packages/bpartner/dto)
-![GitHub Actions](https://github.com/bpartner/data-helper/actions/workflows/main.yml/badge.svg)
 
-Simple create DTO from any array data.
+
+Simple create DTO from any array.
 
 ## Installation
 
@@ -16,8 +16,9 @@ composer require bpartner/data-helper
 
 ## Usage
 Declare you Dto object. You can use any types declarations.
-For array or collection you can use PHPDoc annotation with type of data inside.
-Supported only array and collection 
+
+For array or collection you can use PHPDoc annotation with type of data inside. Supported only array and collection.
+
 ```php
 class DemoDto extends DtoAbstract
 {
@@ -38,20 +39,22 @@ class DemoDto extends DtoAbstract
     public Request $request;
 }
 ```
-Create DTO from any array data (example: request()->all())
-Use facade Dto
+
+Create DTO from any array data (example: request()->all()) by facade Dto
+
 ```php
 $data = request()->all();
 $dto = Dto::build(DemoDto::class, $data);
 ```
-Now you can transfer your DTO to any Object as parameter and use
+
+Now you can transfer your DTO to any Object as parameter and use:
 
 ```php
 $name = $dto->name;
 $objectCollection = $dto->objectsCollection;
 ```
 
-You can transform input parameters to any string format by third parameter
+You can transform input parameters to any string format by third parameter. (example: first_name -> firstName)
 
 ```php
 class DemoDto extends DtoAbstract
@@ -67,7 +70,7 @@ $dto = Dto::build(DemoDto::class, $inputData, DtoFactory::CAMEL_CASE);
 
 ```
 
-Transform your DTO to array or flat array with
+Transform your DTO to array or flat array.
 
 ```php
 $array = $dto->toArray();
@@ -110,12 +113,12 @@ array:5 [
   ]                             
 ]                               
 ```
-Important! Collection not flip in flat array
+Important! Collection and nested array are not flip to flat array.
 
 ## Credits
 
--   [Alexander Zinchenko](https://github.com/bpartner)
-Thanks to [Andrey Iatsenko](https://github.com/yzen-dev/plain-to-class)  for idea and some code :)
+- [Alexander Zinchenko](https://github.com/bpartner)
+- Thanks to [Andrey Iatsenko](https://github.com/yzen-dev/plain-to-class)  for idea and some code :)
 
 ## License
 

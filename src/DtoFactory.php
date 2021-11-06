@@ -23,15 +23,15 @@ class DtoFactory
     /**
      * @template T
      *
-     * @param class-string<T>          $classDTO
-     * @param array<mixed>|object|null $args
-     * @param int                      $flag
+     * @param class-string<T> $classDTO
+     * @param array|null      $args
+     * @param int             $flag
      *
      * @return T
      * @throws CreatorException|ReflectionException
      *
      */
-    public function build(string $classDTO, $args, int $flag = self::AS_IS): DtoInterface
+    public function build(string $classDTO, array $args = null, int $flag = self::AS_IS): DtoInterface
     {
         /** @var ReflectionClass | DtoInterface $instance */
         $instance = self::checkParameters($classDTO, $args);
@@ -40,9 +40,6 @@ class DtoFactory
             return $instance;
         }
 
-        if (is_object($args)) {
-            $args = (array) $args;
-        }
         $dto = new $classDTO();
 
         return self::create($dto, $args, $instance, $flag);
@@ -73,8 +70,12 @@ class DtoFactory
     /**
      * @throws \ReflectionException|\Bpartner\Dto\Exceptions\CreatorException
      */
-    private static function create(DtoInterface $instance, array $args, ReflectionClass $refInstance, int $flag): DtoInterface
-    {
+    private static function create(
+        DtoInterface $instance,
+        array $args,
+        ReflectionClass $refInstance,
+        int $flag
+    ): DtoInterface {
         foreach ($refInstance->getProperties() as $item) {
             $property = self::transform($flag, $item->name);
             $propertyClass = $refInstance->getProperty($item->name);
@@ -121,6 +122,7 @@ class DtoFactory
     {
         if (in_array($type, ['int', 'float', 'string', 'bool'])) {
             $instance->{$current->name} = $args[$property] ?? null;
+
             return true;
         }
 
@@ -140,6 +142,7 @@ class DtoFactory
     {
         if ($type === \Carbon\Carbon::class) {
             $instance->{$current->name} = $args[$property] ? Carbon::parse($args[$property]) : null;
+
             return true;
         }
 
@@ -173,15 +176,18 @@ class DtoFactory
                     /** @phpstan-ignore-next-line */
                     $instance->{$current->name}[] = self::build($docType, $el);
                 }
+
                 return true;
             }
 
             $instance->{$current->name} = $args[$property];
+
             return true;
         }
 
         return false;
     }
+
     /**
      * @param string                               $type
      * @param \Bpartner\Dto\Contracts\DtoInterface $instance
@@ -210,6 +216,7 @@ class DtoFactory
                     /** @phpstan-ignore-next-line */
                     $instance->{$current->name}->push(self::build($docType, $el));
                 }
+
                 return true;
             }
         }
@@ -221,26 +228,37 @@ class DtoFactory
      * @throws \ReflectionException
      * @throws \Bpartner\Dto\Exceptions\CreatorException
      */
-    private static function isDtoType(string $type, DtoInterface $instance, array $args, $current, $property, $flag): bool
-    {
+    private static function isDtoType(
+        string $type,
+        DtoInterface $instance,
+        array $args,
+        $current,
+        $property,
+        $flag
+    ): bool {
         if ($type && $instance instanceof DtoAbstract) {
             if (is_array(($args[$property] ?? null))) {
                 /** @phpstan-ignore-next-line */
                 $instance->{$current->name} = self::build($type, $args[$property], $flag);
+
                 return true;
             }
             if (is_object($args[$property])) {
                 $instance->{$current->name} = $args[$property];
+
                 return true;
             }
             $instance->{$current->name} = self::build($type, $args, $flag);
+
             return true;
         }
 
         return false;
     }
+
     /**
      * @param string|false $phpDoc
+     *
      * @return string|null
      */
     private static function getClassFromPhpDoc($phpDoc): ?string
