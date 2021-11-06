@@ -1,0 +1,58 @@
+{
+    "name": "bpartner/data-helper",
+    "description": "DTO with simple factory",
+    "keywords": [
+        "bpartner",
+        "dto"
+    ],
+    "homepage": "https://github.com/bpartner/dto",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alexander Zinchenko",
+            "email": "azinchenko@bpartner.com.ua",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^7.0|^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^5.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bpartner\\Dto\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bpartner\\Dto\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bpartner\\Dto\\DtoServiceProvider"
+            ],
+            "aliases": {
+                "Dto": "Bpartner\\Dto\\Facades\\DtoFacade"
+            }
+        }
+    }
+}
