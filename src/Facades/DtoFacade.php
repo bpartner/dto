@@ -4,6 +4,9 @@ namespace Bpartner\Dto\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * @method build()
+ */
 class DtoFacade extends Facade
 {
     /**

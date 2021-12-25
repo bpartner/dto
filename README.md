@@ -8,6 +8,10 @@ Simple create DTO from any array.
 
 ## Installation
 
+####Requirements:
+- PHP 7.4 | 8.0
+- Laravel 7 | 8
+
 You can install the package via composer:
 
 ```bash
@@ -15,7 +19,7 @@ composer require bpartner/data-helper
 ```
 
 ## Usage
-Declare you Dto object. You can use any types declarations.
+Declare you DTO object. You can use any types declarations.
 
 For array or collection you can use PHPDoc annotation with type of data inside. Supported only array and collection.
 
@@ -113,7 +117,7 @@ array:5 [
   ]                             
 ]                               
 ```
-Important! Collection and nested array are not flip to flat array.
+Important! Collections and nested arrays are not flip to flat array.
 
 ## Credits
 
