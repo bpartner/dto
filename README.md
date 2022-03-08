@@ -9,13 +9,13 @@ Simple create DTO from any array.
 ## Installation
 
 ####Requirements:
-- PHP 7.4 | 8.0
-- Laravel 7 | 8
+- PHP 8.0
+- Laravel 8 | 9
 
 You can install the package via composer:
 
 ```bash
-composer require bpartner/data-helper
+composer require bpartner/dto
 ```
 
 ## Usage
@@ -26,6 +26,8 @@ For array or collection you can use PHPDoc annotation with type of data inside. 
 ```php
 class DemoDto extends DtoAbstract
 {
+    protected const CLASS_FORM_REQUEST = UpdateUserFormRequest::class;
+    
     public string $name;
     public Carbon $date;
     public DtoOtherObject $otherObject;
@@ -47,9 +49,25 @@ class DemoDto extends DtoAbstract
 Create DTO from any array data (example: request()->all()) by facade Dto
 
 ```php
-$data = request()->all();
+//In any place of your code
+$data = request()->all(); //array data
 $dto = Dto::build(DemoDto::class, $data);
 ```
+or
+
+```php
+/**
+ * In controller
+ * 
+ * Create FormRequest and assign to CLASS_FORM_REQUEST const in DTO
+ * 
+ */ 
+public function store(DemoDto $dto)
+{
+    //Use $dto made from UpdateUserFormRequest
+}
+```
+
 
 Now you can transfer your DTO to any Object as parameter and use:
 
@@ -122,7 +140,6 @@ Important! Collections and nested arrays are not flip to flat array.
 ## Credits
 
 - [Alexander Zinchenko](https://github.com/bpartner)
-- Thanks to [Andrey Iatsenko](https://github.com/yzen-dev/plain-to-class)  for idea and some code :)
 
 ## License
 

@@ -2,6 +2,12 @@
 
 namespace Bpartner\Dto;
 
+use Bpartner\Dto\CreatorsValue\ArrayType;
+use Bpartner\Dto\CreatorsValue\CarbonType;
+use Bpartner\Dto\CreatorsValue\CollectionType;
+use Bpartner\Dto\CreatorsValue\DefaultType;
+use Bpartner\Dto\CreatorsValue\DtoType;
+use Bpartner\Dto\CreatorsValue\ScalarType;
 use Illuminate\Support\ServiceProvider;
 
 class DtoServiceProvider extends ServiceProvider
@@ -11,33 +17,14 @@ class DtoServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
+        /**
          * Optional methods to load your package assets
          */
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'dto');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'dto');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
-
+        $this->registerPropertiesType();
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/config.php' => config_path('dto.php'),
             ], 'config');
-
-            // Publishing the views.
-            /*$this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/dto'),
-            ], 'views');*/
-
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/dto'),
-            ], 'assets');*/
-
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/dto'),
-            ], 'lang');*/
 
             // Registering package commands.
             // $this->commands([]);
@@ -56,5 +43,15 @@ class DtoServiceProvider extends ServiceProvider
         $this->app->singleton('dto', function () {
             return new DtoFactory();
         });
+    }
+
+    private function registerPropertiesType(): void
+    {
+        TypeResolver::register(DefaultType::class);
+        TypeResolver::register(ScalarType::class);
+        TypeResolver::register(CarbonType::class);
+        TypeResolver::register(ArrayType::class);
+        TypeResolver::register(CollectionType::class);
+        TypeResolver::register(DtoType::class);
     }
 }

@@ -2,14 +2,12 @@
 
 namespace Bpartner\Dto;
 
-use Bpartner\Dto\Contracts\DtoAbstract;
 use Bpartner\Dto\Contracts\DtoInterface;
 use Bpartner\Dto\Exceptions\CreatorException;
-use Illuminate\Support\Carbon;
+use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionProperty;
 
 class DtoFactory
 {
@@ -23,9 +21,9 @@ class DtoFactory
     /**
      * @template T
      *
-     * @param class-string<T> $classDTO
-     * @param array|null      $args
-     * @param int             $flag
+     * @param  class-string<T>  $classDTO
+     * @param  array|null  $args
+     * @param  int  $flag
      *
      * @return T
      * @throws CreatorException|ReflectionException
@@ -52,7 +50,8 @@ class DtoFactory
     {
         try {
             $refInstance = new ReflectionClass($classDTO);
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
+            logger()->error($e->getMessage());
             throw new CreatorException("Class $classDTO not found.");
         }
 
@@ -68,7 +67,7 @@ class DtoFactory
     }
 
     /**
-     * @throws \ReflectionException|\Bpartner\Dto\Exceptions\CreatorException
+     * @throws \ReflectionException
      */
     private static function create(
         DtoInterface $instance,
@@ -81,195 +80,27 @@ class DtoFactory
             $propertyClass = $refInstance->getProperty($item->name);
             $propertyClassType = $propertyClass->getType();
 
-            $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
+            $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : '';
 
-            if (self::isScalarType($propertyClassTypeName, $instance, $args, $item, $property)) {
-                continue;
-            }
-
-            if (self::isCarbonType($propertyClassTypeName, $instance, $args, $item, $property)) {
-                continue;
-            }
-
-            if (self::isArrayType($propertyClassTypeName, $instance, $args, $propertyClass, $item, $property)) {
-                continue;
-            }
-
-            if (self::isCollectionType($propertyClassTypeName, $instance, $args, $propertyClass, $item, $property)) {
-                continue;
-            }
-
-            if (self::isDtoType($propertyClassTypeName, $instance, $args, $item, $property, $flag)) {
-                continue;
-            }
-
-            $instance->{$item->name} = $args[$property] ?? null;
+            app(Pipeline::class)
+                ->send(
+                    new CreatorValueData(
+                        $propertyClassTypeName,
+                        $instance,
+                        $args,
+                        $propertyClass,
+                        $item,
+                        $property,
+                        $flag
+                    )
+                )
+                ->through(TypeResolver::$resolvers)
+                ->then(function ($result) {
+                    return $result;
+                });
         }
 
         return $instance;
-    }
-
-    /**
-     * @param string                               $type
-     * @param \Bpartner\Dto\Contracts\DtoInterface $instance
-     * @param array                                $args
-     * @param                                      $current
-     * @param                                      $property
-     *
-     * @return bool
-     */
-    private static function isScalarType(string $type, DtoInterface $instance, array $args, $current, $property): bool
-    {
-        if (in_array($type, ['int', 'float', 'string', 'bool'])) {
-            $instance->{$current->name} = $args[$property] ?? null;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string                               $type
-     * @param \Bpartner\Dto\Contracts\DtoInterface $instance
-     * @param array                                $args
-     * @param                                      $current
-     * @param                                      $property
-     *
-     * @return bool
-     */
-    private static function isCarbonType(string $type, DtoInterface $instance, array $args, $current, $property): bool
-    {
-        if ($type === \Carbon\Carbon::class) {
-            $instance->{$current->name} = $args[$property] ? Carbon::parse($args[$property]) : null;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string                               $type
-     * @param \Bpartner\Dto\Contracts\DtoInterface $instance
-     * @param array                                $args
-     * @param \ReflectionProperty                  $propertyClass
-     * @param                                      $current
-     * @param                                      $property
-     *
-     * @return bool
-     * @throws \Bpartner\Dto\Exceptions\CreatorException
-     * @throws \ReflectionException
-     */
-    private static function isArrayType(
-        string $type,
-        DtoInterface $instance,
-        array $args,
-        ReflectionProperty $propertyClass,
-        $current,
-        $property
-    ): bool {
-        if ($type === 'array') {
-            $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
-            if ($docType) {
-                foreach ($args[$property] as $el) {
-                    /** @phpstan-ignore-next-line */
-                    $instance->{$current->name}[] = self::build($docType, $el);
-                }
-
-                return true;
-            }
-
-            $instance->{$current->name} = $args[$property];
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string                               $type
-     * @param \Bpartner\Dto\Contracts\DtoInterface $instance
-     * @param array                                $args
-     * @param \ReflectionProperty                  $propertyClass
-     * @param                                      $current
-     * @param                                      $property
-     *
-     * @return bool
-     * @throws \Bpartner\Dto\Exceptions\CreatorException
-     * @throws \ReflectionException
-     */
-    private static function isCollectionType(
-        string $type,
-        DtoInterface $instance,
-        array $args,
-        ReflectionProperty $propertyClass,
-        $current,
-        $property
-    ): bool {
-        if ($type === \Illuminate\Support\Collection::class) {
-            $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
-            if ($docType) {
-                $instance->{$current->name} = collect();
-                foreach ($args[$property] as $el) {
-                    /** @phpstan-ignore-next-line */
-                    $instance->{$current->name}->push(self::build($docType, $el));
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @throws \ReflectionException
-     * @throws \Bpartner\Dto\Exceptions\CreatorException
-     */
-    private static function isDtoType(
-        string $type,
-        DtoInterface $instance,
-        array $args,
-        $current,
-        $property,
-        $flag
-    ): bool {
-        if ($type && $instance instanceof DtoAbstract) {
-            if (is_array(($args[$property] ?? null))) {
-                /** @phpstan-ignore-next-line */
-                $instance->{$current->name} = self::build($type, $args[$property], $flag);
-
-                return true;
-            }
-            if (is_object($args[$property])) {
-                $instance->{$current->name} = $args[$property];
-
-                return true;
-            }
-            $instance->{$current->name} = self::build($type, $args, $flag);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string|false $phpDoc
-     *
-     * @return string|null
-     */
-    private static function getClassFromPhpDoc($phpDoc): ?string
-    {
-        if ($phpDoc) {
-            preg_match('/(array|collection)<([a-zA-Z\d\\\]+)>/m', $phpDoc, $docType);
-
-            return $docType[2] ?? null;
-        }
-
-        return null;
     }
 
     /**
@@ -280,26 +111,13 @@ class DtoFactory
      */
     private static function transform($flag, $name): string
     {
-        switch ($flag) {
-            case self::SNAKE_CASE:
-                $property = Str::snake($name);
-                break;
-            case self::CAMEL_CASE:
-                $property = Str::camel($name);
-                break;
-            case self::PASCAL_CASE:
-                $property = Str::studly($name);
-                break;
-            case self::KEBAB_CASE:
-                $property = Str::kebab($name);
-                break;
-            case self::UPPER_FIRST:
-                $property = Str::ucfirst($name);
-                break;
-            default :
-                $property = $name;
-        }
-
-        return $property;
+        return match ($flag) {
+            self::SNAKE_CASE => Str::snake($name),
+            self::CAMEL_CASE => Str::camel($name),
+            self::PASCAL_CASE => Str::studly($name),
+            self::KEBAB_CASE => Str::kebab($name),
+            self::UPPER_FIRST => Str::ucfirst($name),
+            default => $name,
+        };
     }
 }

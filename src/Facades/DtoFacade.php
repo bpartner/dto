@@ -5,7 +5,7 @@ namespace Bpartner\Dto\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method build()
+ * @method build(string $classname, array $data)
  */
 class DtoFacade extends Facade
 {
@@ -14,7 +14,7 @@ class DtoFacade extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'dto';
     }
