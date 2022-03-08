@@ -106,6 +106,9 @@ public static function withMap(array $data): DtoInterface
     
     return new static($mappedData);
 }
+
+//Client code
+$dto = Dto::build(DemoDto::class, request()->all());
 ```
 
 Transform your DTO to array or flat array.
