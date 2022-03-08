@@ -2,13 +2,11 @@
 
 namespace Bpartner\Dto\Contracts;
 
-use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Routing\Pipeline;
-use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\Pure;
 
-class DtoAbstract implements DtoInterface, Arrayable
+abstract class DtoAbstract implements DtoInterface, Arrayable
 {
     protected const CLASS_FORM_REQUEST = '';
 
@@ -56,7 +54,7 @@ class DtoAbstract implements DtoInterface, Arrayable
      * @return array
      */
     #[Pure]
-    private function transformToFlatArray(array $array): array
+    protected function transformToFlatArray(array $array): array
     {
         $result = [];
 
@@ -78,7 +76,7 @@ class DtoAbstract implements DtoInterface, Arrayable
         return $result;
     }
 
-    private function containsArray($array): bool
+    protected function containsArray($array): bool
     {
         foreach ($array as $value) {
             if (is_array($value)) {
@@ -99,15 +97,14 @@ class DtoAbstract implements DtoInterface, Arrayable
     }
 
     /**
-     * @param array $data
+     * Creat DTO with custom mapping
+     *
+     * @param  array  $data
      *
      * @return $this
-     *
-     * public static function withMap(array $data): self
-     * {
-     *       $instance = new static;
-     *      //Data manipulations
-     *      return $instance;
-     * }
      */
+//    public static function withMap(array $data): DtoInterface
+//    {
+//        return new static;
+//    }
 }

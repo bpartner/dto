@@ -26,8 +26,12 @@ For array or collection you can use PHPDoc annotation with type of data inside. 
 ```php
 class DemoDto extends DtoAbstract
 {
+    //Optional
     protected const CLASS_FORM_REQUEST = UpdateUserFormRequest::class;
     
+    /**
+    * DTO fields
+    */
     public string $name;
     public Carbon $date;
     public DtoOtherObject $otherObject;
@@ -40,10 +44,7 @@ class DemoDto extends DtoAbstract
     
     /** @var collection<\App\Dto\DtoOtherObject>  */
     public array $objectsArrayOfCollection;
-    
-    public Fluent $fluent;
-    public Request $request;
-}
+    }
 ```
 
 Create DTO from any array data (example: request()->all()) by facade Dto
@@ -53,7 +54,7 @@ Create DTO from any array data (example: request()->all()) by facade Dto
 $data = request()->all(); //array data
 $dto = Dto::build(DemoDto::class, $data);
 ```
-or
+or from FormRequest
 
 ```php
 /**
@@ -90,6 +91,21 @@ $inputData = [
 
 $dto = Dto::build(DemoDto::class, $inputData, DtoFactory::CAMEL_CASE);
 
+```
+
+### Custom mapping
+
+You can create DTO with custom mapping. Add static method withMap()
+
+```php
+public static function withMap(array $data): DtoInterface
+{
+    $mappedData = [
+        'dto_param' => $data['some_param'],
+    ];
+    
+    return new static($mappedData);
+}
 ```
 
 Transform your DTO to array or flat array.
