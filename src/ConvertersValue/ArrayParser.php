@@ -24,6 +24,7 @@ class ArrayParser implements HandledInterface
                 if ($item instanceof DtoInterface) {
                     return $item->toArray();
                 }
+
                 return $item;
             })
             ->toArray();

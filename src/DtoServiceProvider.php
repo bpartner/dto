@@ -23,26 +23,12 @@ class DtoServiceProvider extends ServiceProvider
         $this->registerPropertiesType();
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('dto.php'),
+                __DIR__ . '/../config/config.php' => config_path('dto.php'),
             ], 'config');
 
             // Registering package commands.
             // $this->commands([]);
         }
-    }
-
-    /**
-     * Register the application services.
-     */
-    public function register()
-    {
-        // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'dto');
-
-        // Register the main class to use with the facade
-        $this->app->singleton('dto', function () {
-            return new DtoFactory();
-        });
     }
 
     private function registerPropertiesType(): void
@@ -53,5 +39,19 @@ class DtoServiceProvider extends ServiceProvider
         TypeResolver::register(ArrayType::class);
         TypeResolver::register(CollectionType::class);
         TypeResolver::register(DtoType::class);
+    }
+
+    /**
+     * Register the application services.
+     */
+    public function register()
+    {
+        // Automatically apply the package configuration
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'dto');
+
+        // Register the main class to use with the facade
+        $this->app->singleton('dto', function () {
+            return new DtoFactory();
+        });
     }
 }

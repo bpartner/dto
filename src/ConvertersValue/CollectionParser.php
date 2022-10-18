@@ -22,7 +22,8 @@ class CollectionParser implements HandledInterface
         return $value->map(
         /**
          * @throws \JsonException
-         */ fn(DtoInterface $item) => $item->toArray())
+         */ fn(DtoInterface $item) => $item->toArray()
+        )
                      ->toArray();
     }
 

@@ -7,7 +7,7 @@ use Bpartner\Dto\Contracts\HandledInterface;
 class ScalarType implements HandledInterface
 {
     /**
-     * @param \Bpartner\Dto\CreatorValueData $data
+     * @param  \Bpartner\Dto\CreatorValueData  $data
      * @param $next
      *
      * @return bool
@@ -20,7 +20,6 @@ class ScalarType implements HandledInterface
             return true;
         }
 
-        return false;
-
+        return $next($data);
     }
 }

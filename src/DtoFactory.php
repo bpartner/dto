@@ -104,20 +104,20 @@ class DtoFactory
     }
 
     /**
-     * @param $flag
-     * @param $name
+     * @param  int  $flag
+     * @param  string  $name
      *
      * @return string
      */
-    private static function transform($flag, $name): string
+    private static function transform(int $flag, string $name): string
     {
         return match ($flag) {
-            self::SNAKE_CASE => Str::snake($name),
-            self::CAMEL_CASE => Str::camel($name),
+            self::SNAKE_CASE  => Str::snake($name),
+            self::CAMEL_CASE  => Str::camel($name),
             self::PASCAL_CASE => Str::studly($name),
-            self::KEBAB_CASE => Str::kebab($name),
+            self::KEBAB_CASE  => Str::kebab($name),
             self::UPPER_FIRST => Str::ucfirst($name),
-            default => $name,
+            default           => $name
         };
     }
 }

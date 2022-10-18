@@ -45,6 +45,6 @@ class DtoType implements HandledInterface
             return true;
         }
 
-        return false;
+        return $next($data);
     }
 }

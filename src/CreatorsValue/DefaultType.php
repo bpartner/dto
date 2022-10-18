@@ -19,6 +19,6 @@ class DefaultType implements HandledInterface
             $data->instance->{$data->item->name} = $data->args[$data->property] ?? null;
         }
 
-        return true;
+        return $next($data);
     }
 }

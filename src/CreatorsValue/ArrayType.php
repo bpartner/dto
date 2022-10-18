@@ -32,7 +32,7 @@ class ArrayType implements HandledInterface
             return true;
         }
 
-        return false;
+        return $next($data);
     }
 
     private function getClassFromPhpDoc($phpDoc): ?string

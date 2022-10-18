@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 class CarbonType implements HandledInterface
 {
     /**
-     * @param \Bpartner\Dto\CreatorValueData $data
+     * @param  \Bpartner\Dto\CreatorValueData  $data
      * @param $next
      *
      * @return bool
@@ -23,7 +23,6 @@ class CarbonType implements HandledInterface
             return true;
         }
 
-        return false;
-
+        return $next($data);
     }
 }

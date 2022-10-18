@@ -18,6 +18,25 @@ abstract class DtoAbstract implements DtoInterface, Arrayable
         $this->createFromArray($data);
     }
 
+    protected function createFromArray(array $data): void
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function flatArray(): array
+    {
+        $array = $this->toArray();
+
+        return $this->transformToFlatArray($array);
+    }
+
     /**
      * @throws \JsonException
      */
@@ -39,17 +58,7 @@ abstract class DtoAbstract implements DtoInterface, Arrayable
     }
 
     /**
-     * @throws \JsonException
-     */
-    public function flatArray(): array
-    {
-        $array = $this->toArray();
-
-        return $this->transformToFlatArray($array);
-    }
-
-    /**
-     * @param array $array
+     * @param  array  $array
      *
      * @return array
      */
@@ -85,15 +94,6 @@ abstract class DtoAbstract implements DtoInterface, Arrayable
         }
 
         return false;
-    }
-
-    protected function createFromArray(array $data): void
-    {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
-            }
-        }
     }
 
     /**

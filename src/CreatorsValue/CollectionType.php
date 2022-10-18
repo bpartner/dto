@@ -30,7 +30,7 @@ class CollectionType implements HandledInterface
             }
         }
 
-        return false;
+        return $next($data);
     }
 
     private function getClassFromPhpDoc($phpDoc): ?string
