@@ -1,7 +1,9 @@
 # Laravel Data transfer objects helper
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/bpartner/data-helper.svg?style=flat-square)](https://packagist.org/packages/bpartner/dto)
-[![Total Downloads](https://img.shields.io/packagist/dt/bpartner/data-helper.svg?style=flat-square)](https://packagist.org/packages/bpartner/dto)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/bpartner/dto.svg?style=flat-square)]
+(https://packagist.org/packages/bpartner/dto)
+[![Total Downloads](https://img.shields.io/packagist/dt/bpartner/dto.svg?style=flat-square)](https://packagist.
+org/packages/bpartner/dto)
 
 
 Simple create DTO from any array.
