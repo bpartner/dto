@@ -30,7 +30,7 @@ class DtoType implements HandledInterface
                 return true;
             }
 
-            if (is_object($data->args[$data->property])) {
+            if (is_object($data->args[$data->property] ?? null)) {
                 $data->instance->{$data->item->name} = $data->args[$data->property];
 
                 return true;
@@ -38,7 +38,7 @@ class DtoType implements HandledInterface
 
             $data->instance->{$data->item->name} = (new DtoFactory())->build(
                 $data->propertyClassTypeName,
-                $data->args[$data->property],
+                $data->args[$data->property] ?? null,
                 $data->flag
             );
 
