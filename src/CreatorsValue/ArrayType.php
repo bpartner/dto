@@ -19,7 +19,8 @@ class ArrayType implements HandledInterface
         if ($data->propertyClassTypeName === 'array') {
             $docType = $this->getClassFromPhpDoc($data->propertyClass->getDocComment());
             if ($docType) {
-                foreach ($data->args[$data->property] as $el) {
+                $arrayData = $data->args[$data->property] ?? null;
+                foreach ($arrayData as $el) {
                     /** @phpstan-ignore-next-line */
                     $data->instance->{$data->item->name}[] = (new DtoFactory())->build($docType, $el);
                 }

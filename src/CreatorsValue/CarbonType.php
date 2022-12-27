@@ -16,7 +16,7 @@ class CarbonType implements HandledInterface
     public function handle($data, $next): bool
     {
         if ($data->propertyClassTypeName === \Carbon\Carbon::class) {
-            $data->instance->{$data->item->name} = $data->args[$data->property]
+            $data->instance->{$data->item->name} = isset($data->args[$data->property])
                 ? Carbon::parse($data->args[$data->property])
                 : null;
 
