@@ -28,7 +28,9 @@ class ArrayType implements HandledInterface
                 return true;
             }
 
-            $data->instance->{$data->item->name} = $data->args[$data->property];
+            if ($data->args[$data->property] ?? null) {
+                $data->instance->{$data->item->name} = $data->args[$data->property];
+            }
 
             return true;
         }
