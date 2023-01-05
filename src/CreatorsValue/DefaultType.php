@@ -15,8 +15,8 @@ class DefaultType implements HandledInterface
     public function handle($data, $next): bool
     {
         $result = $next($data);
-        if (!$result) {
-            $data->instance->{$data->item->name} = $data->args[$data->property] ?? null;
+        if (!$result && ($data->args[$data->property] ?? null)) {
+            $data->instance->{$data->item->name} = $data->args[$data->property];
         }
 
         return $result;
