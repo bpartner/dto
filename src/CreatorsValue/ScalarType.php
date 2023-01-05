@@ -14,8 +14,13 @@ class ScalarType implements HandledInterface
      */
     public function handle($data, $next): bool
     {
-        if (in_array($data->propertyClassTypeName, ['int', 'float', 'string', 'bool'])) {
-            $data->instance->{$data->item->name} = $data->args[$data->property] ?? null;
+        if (($data->args[$data->property] ?? null) && in_array($data->propertyClassTypeName, [
+                'int',
+                'float',
+                'string',
+                'bool',
+            ])) {
+            $data->instance->{$data->item->name} = $data->args[$data->property];
 
             return true;
         }

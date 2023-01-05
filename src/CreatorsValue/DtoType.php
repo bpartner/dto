@@ -36,11 +36,15 @@ class DtoType implements HandledInterface
                 return true;
             }
 
-            $data->instance->{$data->item->name} = (new DtoFactory())->build(
-                $data->propertyClassTypeName,
-                $data->args[$data->property] ?? null,
-                $data->flag
-            );
+            if ($data->args[$data->property] ?? null) {
+                $data->instance->{$data->item->name} = (new DtoFactory())->build(
+                    $data->propertyClassTypeName,
+                    $data->args[$data->property] ?? null,
+                    $data->flag
+                );
+
+                return true;
+            }
 
             return true;
         }
