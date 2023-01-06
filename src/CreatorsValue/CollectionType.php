@@ -21,7 +21,7 @@ class CollectionType implements HandledInterface
             $docType = $this->getClassFromPhpDoc($data->propertyClass->getDocComment());
             if ($docType) {
                 $data->instance->{$data->item->name} = collect();
-                $arrayData = $data->args[$data->property] ?? [];
+                $arrayData = $data->args[$data->property] ??  $data->args ?? [];
                 foreach ($arrayData as $el) {
                     /** @phpstan-ignore-next-line */
                     $data->instance->{$data->item->name}->push((new DtoFactory())->build($docType, $el));
