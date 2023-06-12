@@ -5,6 +5,7 @@ namespace Bpartner\Dto\CreatorsValue;
 use Bpartner\Dto\Contracts\DtoAbstract;
 use Bpartner\Dto\Contracts\HandledInterface;
 use Bpartner\Dto\DtoFactory;
+use Throwable;
 
 class DtoType implements HandledInterface
 {
@@ -39,11 +40,20 @@ class DtoType implements HandledInterface
             if ($data->args[$data->property] ?? null) {
                 $data->instance->{$data->item->name} = (new DtoFactory())->build(
                     $data->propertyClassTypeName,
-                    $data->args[$data->property] ?? null,
+                    $data->args[$data->property] ?? [],
                     $data->flag
                 );
 
                 return true;
+            }
+
+            try {
+                $data->instance->{$data->item->name} = (new DtoFactory())->build(
+                    $data->propertyClassTypeName,
+                    $data->args[$data->property] ?? [],
+                    $data->flag
+                );
+            } catch (Throwable) {
             }
 
             return true;

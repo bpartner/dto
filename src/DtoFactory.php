@@ -55,12 +55,12 @@ class DtoFactory
             throw new CreatorException("Class $classDTO not found.");
         }
 
-        if ($args === null) {
-            return new $classDTO();
-        }
-
         if (method_exists($classDTO, 'withMap')) {
             return $classDTO::withMap($args);
+        }
+
+        if ($args === null) {
+            return new $classDTO();
         }
 
         return $refInstance;
